@@ -1,0 +1,14 @@
+---
+- name: update the thing
+  hosts: all
+  become: true
+  become_user: root
+  tasks:
+    - name: "Append host:~/.ssh/id_rsa.pub to box:~/.ssh/authorized_keys"
+      ansible.posix.authorized_key:
+        user: root
+        state: present
+        key: "{{ lookup('file', '/home/michael/.ssh/id_rsa.pub') }}"
+
+    - name: "enable network interface"
+      shell: "echo '[Match]\nName=ens5\n\n[Network]\nDHCP=ipv4\n' > /etc/systemd/network/50-wired.network"

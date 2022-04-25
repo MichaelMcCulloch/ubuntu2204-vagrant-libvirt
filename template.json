@@ -1,0 +1,66 @@
+{
+    "builders": [
+        {
+            "accelerator": "kvm",
+            "boot_command": [
+                "<esc><esc><esc><esc>e<wait>",
+                "<del><del><del><del><del><del><del><del>",
+                "<del><del><del><del><del><del><del><del>",
+                "<del><del><del><del><del><del><del><del>",
+                "<del><del><del><del><del><del><del><del>",
+                "<del><del><del><del><del><del><del><del>",
+                "<del><del><del><del><del><del><del><del>",
+                "<del><del><del><del><del><del><del><del>",
+                "<del><del><del><del><del><del><del><del>",
+                "<del><del><del><del><del><del><del><del>",
+                "<del><del><del><del><del><del><del><del>",
+                "<del><del><del><del><del><del><del><del>",
+                "<del><del><del><del><del><del><del><del>",
+                "<del><del><del><del><del><del><del><del>",
+                "<del><del><del><del><del><del><del><del><del>",
+                "linux /casper/vmlinuz --- autoinstall ds=\"nocloud-net;seedfrom=http://{{.HTTPIP}}:{{.HTTPPort}}/\"<enter>",
+                "initrd /casper/initrd<enter>",
+                "boot",
+                "<enter><f10><wait>"
+            ],
+            "net_device": "virtio-net",
+            "disk_interface": "virtio",
+            "cpus": 4,
+            "memory": 4096,
+            "boot_wait": "2s",
+            "disk_size": "5000M",
+            "format": "qcow2",
+            "http_directory": "http",
+            "iso_checksum": "sha256:84aeaf7823c8c61baa0ae862d0a06b03409394800000b3235854a6b38eb4856f",
+            "iso_url": "./ubuntu-22.04-live-server-amd64.iso",
+            "name": "ubuntu2204-vagrant",
+            "shutdown_command": "echo '{{ user `password` }}' | sudo -S shutdown -h now",
+            "ssh_timeout": "60m",
+            "ssh_password": "ubuntu",
+            "ssh_username": "ubuntu",
+            "type": "qemu"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "ansible",
+            "ansible_ssh_extra_args": [
+                "-oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedKeyTypes=+ssh-rsa"
+            ],
+            "playbook_file": "./playbook.yml"
+        }
+    ],
+    "post-processors": [
+        {
+            "keep_input_artifact": false,
+            "output": "box/ubuntu2204-vagrant.box",
+            "type": "vagrant"
+        }
+    ],
+    "variables": {
+        "disk_size": "100000",
+        "domain": "",
+        "password": "vagrant",
+        "user": "vagrant"
+    }
+}
